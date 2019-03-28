@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'Argon';
+  src: url('./Argon.eot');
+  src: url('./Argon.eot?#iefix') format('embedded-opentype'),
+      url('./Argon.woff') format('woff'),
+      url('./Argon.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
