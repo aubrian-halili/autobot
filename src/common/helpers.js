@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export function arrayToObject(arr, key = 'id') {
   const obj = {};
   arr.forEach((i) => Object.assign(obj, { [i[key]]: i }));
@@ -21,3 +23,13 @@ export const formatMoney = (price, c = 2, d = '.', t = ',') => {
 export const isMobile = () => (/mobile|tablet/i.test(navigator.userAgent));
 
 export const isSafari = () => (/Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor));
+
+export const getIdFromUrl = (url) => {
+  const splitted = _.compact(_.split(url, '/'));
+  return _.last(splitted) || '';
+};
+
+export const getPerson = (state, id) => {
+  const people = state.getIn(['global', 'data', 'people']).toJS();
+  return _.find(people, { id }) || {};
+};
