@@ -3,11 +3,17 @@ import antd from 'antd';
 
 export const Home = styled.div`
   padding: 20px;
+  min-height: 500px;
   > section {
     max-width: 1226px;
     width: 100%;
     margin: auto;
   }
+`;
+
+export const Search = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 export const PeopleList = styled(antd.List)`

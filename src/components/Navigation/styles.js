@@ -120,6 +120,7 @@ export const StyledToggler = styled.button`
   -o-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
   cursor: pointer;
+  border: 0 none;
   position: relative;
   z-index: 11;
   display: none;

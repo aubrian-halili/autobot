@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
+import scrollToComponent from 'react-scroll-to-component';
+import { formatDate } from 'common/helpers';
 import {
-  List, Button, Drawer,
+  Input, List, Button, Drawer, Divider,
 } from 'antd';
 
 import LoadingMask from 'components/LoadingMask';
@@ -22,6 +25,8 @@ import {
 
 import * as S from './styles';
 
+const Search = Input.Search;
+
 class App extends Component {
   state = {
     visible: false,
@@ -31,6 +36,12 @@ class App extends Component {
     const { getPeople } = this.props;
     getPeople();
   }
+
+  onScroll = () => {
+    const navigation = document.querySelector('#top');
+    scrollToComponent(navigation);
+    navigation.focus();
+  };
 
   toggleDrawer = (visible) => {
     this.setState({ visible });
@@ -51,13 +62,28 @@ class App extends Component {
     return (
       <S.Home>
         <section>
+          <S.Search>
+            <div></div>
+            <div>
+              <Search
+                placeholder="input search text"
+                enterButton="Search"
+                size="large"
+                allowClear
+                onSearch={(search) => getPeople({ search })}
+              />
+            </div>
+          </S.Search>
           <S.PeopleList
             itemLayout="horizontal"
             dataSource={people}
             pagination={{
-              defaultCurrent: 1,
               total,
-              onChange: (page) => getPeople({ page }),
+              defaultCurrent: 1,
+              onChange: (page) => {
+                this.onScroll();
+                getPeople({ page });
+              },
             }}
             renderItem={(item) => (
               <List.Item
@@ -75,7 +101,17 @@ class App extends Component {
               >
                 <List.Item.Meta
                   title={item.name}
-                  description={`Height: ${item.height} | Mass: ${item.mass} | Gender: ${item.gender} | Edited: ${item.edited}`}
+                  description={(
+                    <div>
+                      <b>Height:</b>{` ${item.height}`}
+                      <Divider type="vertical" />
+                      <b>Mass:</b>{` ${item.mass}`}
+                      <Divider type="vertical" />
+                      <b>Gender:</b>{` ${_.capitalize(item.gender)}`}
+                      <Divider type="vertical" />
+                      <b>Edited:</b>{` ${formatDate(item.edited)}`}
+                    </div>
+                  )}
                 />
               </List.Item>
             )}
@@ -83,7 +119,7 @@ class App extends Component {
         </section>
         <Drawer
           title={(<b>VEHICLES</b>)}
-          width="50%"
+          width="45%"
           placement="right"
           onClose={() => this.toggleDrawer(false)}
           visible={visible}
@@ -95,7 +131,15 @@ class App extends Component {
               <List.Item>
                 <List.Item.Meta
                   title={item.name}
-                  description={`Model: ${item.model} | Manufacturer: ${item.manufacturer} | Vehicle Class: ${item.vehicleClass}`}
+                  description={(
+                    <div>
+                      <b>Model:</b>{` ${item.model}`}
+                      <Divider type="vertical" />
+                      <b>Manufacturer:</b>{` ${item.manufacturer}`}
+                      <Divider type="vertical" />
+                      <b>Vehicle Class:</b>{` ${item.vehicleClass}`}
+                    </div>
+                  )}
                 />
               </List.Item>
             )}
