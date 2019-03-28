@@ -28,7 +28,6 @@ export const StyledLogo = styled.img.attrs((props) => ({
 
 export const StyledWrapper = styled.footer`
   padding: 45px 20px;
-  border-top: 1px solid ${(props) => props.theme.footer.borderColor};
   @media (max-width: 875px) {
     padding: 25px 10px;
   }
@@ -151,6 +150,7 @@ export const StyledHashtagMobile = styled.p`
 `;
 
 export const StyledUpButton = styled.button`
+  border: 0 none;
   font-size: 16px;
   font-weight: 600;
   color: ${(props) => props.theme.footer.textColor};

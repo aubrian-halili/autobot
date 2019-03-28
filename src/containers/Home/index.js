@@ -11,6 +11,7 @@ import LoadingMask from 'components/LoadingMask';
 import {
   selectAppLoading,
   selectPeople,
+  selectTotal,
   selectPreview,
 } from 'common/selectors';
 import {
@@ -36,8 +37,16 @@ class App extends Component {
   }
 
   render() {
-    const { loading, people, getVehicles, preview, setPreview } = this.props;
     const { visible } = this.state;
+    const {
+      loading,
+      getPeople,
+      people,
+      total,
+      getVehicles,
+      preview,
+      setPreview,
+    } = this.props;
 
     return (
       <S.Home>
@@ -45,36 +54,41 @@ class App extends Component {
           <S.PeopleList
             itemLayout="horizontal"
             dataSource={people}
+            pagination={{
+              defaultCurrent: 1,
+              total,
+              onChange: (page) => getPeople({ page }),
+            }}
             renderItem={(item) => (
-              <List.Item>
+              <List.Item
+                actions={[(
+                  <Button
+                    onClick={() => {
+                      getVehicles(item.id);
+                      setPreview(item.id);
+                      this.toggleDrawer(true);
+                    }}
+                  >
+                    Show Vehicles
+                  </Button>
+                )]}
+              >
                 <List.Item.Meta
                   title={item.name}
-                  // description={`Height: ${item.height} | Mass: ${item.mass} | Gender: ${item.gender} | Edited: ${item.edited}`}
-                  description={(
-                    <div>
-                      <Button
-                        onClick={() => {
-                          getVehicles(item.id);
-                          setPreview(item.id);
-                          this.toggleDrawer(true);
-                        }}
-                      >
-                        Click Me!
-                      </Button>
-                    </div>
-                  )}
+                  description={`Height: ${item.height} | Mass: ${item.mass} | Gender: ${item.gender} | Edited: ${item.edited}`}
                 />
               </List.Item>
             )}
           />
         </section>
         <Drawer
-          width={640}
+          title={(<b>VEHICLES</b>)}
+          width="50%"
           placement="right"
           onClose={() => this.toggleDrawer(false)}
           visible={visible}
         >
-          <List
+          <S.VehicleList
             itemLayout="horizontal"
             dataSource={preview}
             renderItem={(item) => (
@@ -101,6 +115,7 @@ App.propTypes = {
   loading: PropTypes.bool.isRequired,
   getPeople: PropTypes.func.isRequired,
   people: PropTypes.array.isRequired,
+  total: PropTypes.number.isRequired,
   preview: PropTypes.array.isRequired,
   getVehicles: PropTypes.func.isRequired,
   setPreview: PropTypes.func.isRequired,
@@ -109,6 +124,7 @@ App.propTypes = {
 const mapStateToProps = createStructuredSelector({
   loading: selectAppLoading,
   people: selectPeople,
+  total: selectTotal,
   preview: selectPreview,
 });
 

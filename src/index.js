@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router/immutable';
 import configureStore from 'configureStore';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import 'sanitize.css/sanitize.css';
 import 'themes/fonts/fonts.css';
 
 import LanguageProvider from 'containers/LanguageProvider';

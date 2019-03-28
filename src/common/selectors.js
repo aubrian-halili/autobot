@@ -8,6 +8,11 @@ export const selectAppLoading = createSelector(
   (state) => state.getIn(['ui', 'loading']),
 );
 
+export const selectTotal = createSelector(
+  selectGlobalDomain,
+  (state) => state.getIn(['ui', 'total']),
+);
+
 const getVehicleDetails = (list) => {
   return _.map(list, (item) => {
     return {

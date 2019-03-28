@@ -11,6 +11,15 @@ export const Home = styled.div`
 `;
 
 export const PeopleList = styled(antd.List)`
+  .ant-list-item-meta-title {
+    font-weight: 600;
+  }
+`;
+
+export const VehicleList = styled(antd.List)`
+  .ant-list-item-meta-title {
+    font-weight: 600;
+  }
 `;
 
 export const LoadingWrapper = styled.div`

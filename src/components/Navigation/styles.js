@@ -39,6 +39,7 @@ export const StyledBrand = styled.div`
 `;
 
 export const StyledMenus = styled.ul`
+  list-style: none;
   display: flex;
   align-items: center;
   padding: 0;
