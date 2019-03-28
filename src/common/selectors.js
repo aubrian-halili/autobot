@@ -24,7 +24,7 @@ export const selectPeople = createSelector(
   (state) => {
     const list = state.getIn(['data', 'people']).toJS();
     return _.map(list, (item) => {
-      const vehicles = _.get(item, 'vehicleDetails') || [];
+      const vehicleDetails = _.get(item, 'vehicleDetails') || [];
 
       return {
         id: _.get(item, 'id') || '',
@@ -33,8 +33,20 @@ export const selectPeople = createSelector(
         mass: _.get(item, 'mass') || '',
         gender: _.get(item, 'gender') || '',
         edited: _.get(item, 'edited') || '',
-        vehicles: getVehicleDetails(vehicles),
+        vehicleIds: _.get(item, 'vehicleIds') || '',
+        vehicleDetails: getVehicleDetails(vehicleDetails),
       };
     });
+  },
+);
+
+export const selectPreview = createSelector(
+  selectGlobalDomain,
+  selectPeople,
+  (state, people) => {
+    const id = state.getIn(['ui', 'preview']);
+    const person = _.find(people, { id }) || {};
+
+    return _.get(person, 'vehicleDetails') || [];
   },
 );

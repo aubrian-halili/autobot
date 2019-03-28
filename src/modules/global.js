@@ -2,14 +2,17 @@ import { fromJS } from 'immutable';
 import _ from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { message } from 'antd';
-import { getIdFromUrl, getPerson } from 'common/helpers';
+import { getIdFromUrl } from 'common/helpers';
+import { selectPeople } from 'common/selectors';
 
 const GET_PEOPLE = 'modules/global/GET_PEOPLE';
-const GET_PERSON_VEHICLES = 'modules/global/GET_PERSON_VEHICLES';
+const GET_VEHICLES = 'modules/global/GET_VEHICLES';
+const SET_PREVIEW = 'modules/global/SET_PREVIEW';
 const TOGGLE_LOADING_MASK = 'modules/global/TOGGLE_LOADING_MASK';
 
 const initialState = fromJS({
   ui: {
+    preview: '',
     loading: false,
   },
   data: {
@@ -19,21 +22,23 @@ const initialState = fromJS({
 
 const reducer = handleActions({
   [GET_PEOPLE]: (state, { payload: { people } }) => state.setIn(['data', 'people'], fromJS(people)),
-  [GET_PERSON_VEHICLES]: (state, { payload: { id, data } }) => {
+  [GET_VEHICLES]: (state, { payload: { id, data } }) => {
     const people = state.getIn(['data', 'people']);
 
     return state.setIn(['data', 'people'],
       people.update(people.findIndex((item) => item.get('id') === id),
         (person) => person.merge(data)));
   },
+  [SET_PREVIEW]: (state, { payload: { id } }) => state.setIn(['ui', 'preview'], id),
   [TOGGLE_LOADING_MASK]: (state, { payload: { loading } }) => {
     return state.setIn(['ui', 'loading'], loading);
   },
 }, initialState);
 
 const getPeopleAction = createAction(GET_PEOPLE, (people) => ({ people }));
-const getPersonVehiclesAction = createAction(GET_PERSON_VEHICLES, (id, data) => ({ id, data }));
-export const toggleLoadingMaskAction = createAction(TOGGLE_LOADING_MASK, (loading) => ({ loading }));
+const getVehiclesAction = createAction(GET_VEHICLES, (id, data) => ({ id, data }));
+// const toggleLoadingMaskAction = createAction(TOGGLE_LOADING_MASK, (loading) => ({ loading }));
+export const setPreviewAction = createAction(SET_PREVIEW, (id) => ({ id }));
 
 export const getPeopleAsync = (param = {}) => {
   return async function (dispatch, getState, { api }) {
@@ -42,9 +47,13 @@ export const getPeopleAsync = (param = {}) => {
       let results = _.get(resp, 'data.results') || [];
       results = _.map(results, (item) => {
         const url = _.get(item, 'url') || '';
-        const id = getIdFromUrl(url);
+        const vehicles = _.get(item, 'vehicles') || [];
 
-        return _.set(item, 'id', id);
+        return {
+          ...item,
+          id: getIdFromUrl(url),
+          vehicleIds: _.map(vehicles, getIdFromUrl),
+        };
       });
       dispatch(getPeopleAction(results));
     } catch (err) {
@@ -53,18 +62,18 @@ export const getPeopleAsync = (param = {}) => {
   };
 };
 
-export const getPersonVehiclesAsync = (id) => {
+export const getVehiclesAsync = (id) => {
   return async function (dispatch, getState, { api }) {
     try {
-      const person = getPerson(getState(), id);
-      const vehicles = _.get(person, 'vehicles') || [];
-      const vehicleIds = _.map(vehicles, getIdFromUrl);
+      const people = selectPeople(getState());
+      const person = _.find(people, { id }) || {};
+      const vehicleIds = _.get(person, 'vehicleIds') || [];
 
       const resp = await Promise.all(_.map(vehicleIds, (identity) => {
         return api.get(`https://swapi.co/api/vehicles/${identity}`);
       }) || []);
       const results = _.map(resp, 'data');
-      dispatch(getPersonVehiclesAction(id, { vehicleDetails: results }));
+      dispatch(getVehiclesAction(id, { vehicleDetails: results }));
     } catch (err) {
       message.error(err.message, 5);
     }

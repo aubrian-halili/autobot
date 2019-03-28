@@ -1,16 +1,16 @@
 import _ from 'lodash';
 
-export function arrayToObject(arr, key = 'id') {
+const arrayToObject = (arr, key = 'id') => {
   const obj = {};
   arr.forEach((i) => Object.assign(obj, { [i[key]]: i }));
   return obj;
-}
+};
 
-export function objectToArray(obj) {
+const objectToArray = (obj) => {
   return Object.keys(obj).map((key) => obj[key]);
-}
+};
 
-export const formatMoney = (price, c = 2, d = '.', t = ',') => {
+const formatMoney = (price, c = 2, d = '.', t = ',') => {
   let n = price;
   const s = n < 0 ? '-' : '';
   const i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c), 10));
@@ -20,16 +20,20 @@ export const formatMoney = (price, c = 2, d = '.', t = ',') => {
   return s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, `$1${t}`) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : '');
 };
 
-export const isMobile = () => (/mobile|tablet/i.test(navigator.userAgent));
+const isMobile = () => (/mobile|tablet/i.test(navigator.userAgent));
 
-export const isSafari = () => (/Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor));
+const isSafari = () => (/Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor));
 
-export const getIdFromUrl = (url) => {
+const getIdFromUrl = (url) => {
   const splitted = _.compact(_.split(url, '/'));
   return _.last(splitted) || '';
 };
 
-export const getPerson = (state, id) => {
-  const people = state.getIn(['global', 'data', 'people']).toJS();
-  return _.find(people, { id }) || {};
+export {
+  arrayToObject,
+  objectToArray,
+  formatMoney,
+  isMobile,
+  isSafari,
+  getIdFromUrl,
 };

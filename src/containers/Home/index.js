@@ -5,12 +5,20 @@ import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import {
-  List, Button,
+  List, Button, Drawer,
 } from 'antd';
 
-import { selectAppLoading, selectPeople } from 'common/selectors';
 import LoadingMask from 'components/LoadingMask';
-import { getPeopleAsync, getPersonVehiclesAsync } from 'modules/global';
+import {
+  selectAppLoading,
+  selectPeople,
+  selectPreview,
+} from 'common/selectors';
+import {
+  getPeopleAsync,
+  getVehiclesAsync,
+  setPreviewAction,
+} from 'modules/global';
 
 const StyledWrapper = styled.section`
   text-align: center;
@@ -40,18 +48,26 @@ const LoadingWrapper = styled.div`
 `;
 
 class App extends Component {
+  state = {
+    visible: false,
+  }
+
   componentDidMount() {
     const { getPeople } = this.props;
     getPeople();
   }
 
+  toggleDrawer = (visible) => {
+    this.setState({ visible });
+  }
+
   render() {
-    const { loading, people, getVehicles } = this.props;
+    const { loading, people, getVehicles, preview, setPreview } = this.props;
+    const { visible } = this.state;
 
     return (
       <div>
         <StyledWrapper>
-          <h1 className="boom">Welcome Autobot<br />{process.env.REACT_APP_HOST}</h1>
         </StyledWrapper>
         {(loading) && <LoadingWrapper><LoadingMask /></LoadingWrapper>}
         <List
@@ -61,11 +77,15 @@ class App extends Component {
             <List.Item>
               <List.Item.Meta
                 title={item.name}
-                // description={`Height: ${item.height} | Mass: ${item.mass} | Gender: ${item.gender}| Edited: ${item.edited}`}
+                // description={`Height: ${item.height} | Mass: ${item.mass} | Gender: ${item.gender} | Edited: ${item.edited}`}
                 description={(
                   <div>
                     <Button
-                      onClick={() => getVehicles(item.id)}
+                      onClick={() => {
+                        getVehicles(item.id);
+                        setPreview(item.id);
+                        this.toggleDrawer(true);
+                      }}
                     >
                       Click Me!
                     </Button>
@@ -75,6 +95,25 @@ class App extends Component {
             </List.Item>
           )}
         />
+        <Drawer
+          width={640}
+          placement="right"
+          onClose={() => this.toggleDrawer(false)}
+          visible={visible}
+        >
+          <List
+            itemLayout="horizontal"
+            dataSource={preview}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  title={item.name}
+                  description={`Model: ${item.model} | Manufacturer: ${item.manufacturer} | Vehicle Class: ${item.vehicleClass}`}
+                />
+              </List.Item>
+            )}
+          />
+        </Drawer>
       </div>
     );
   }
@@ -84,18 +123,22 @@ App.propTypes = {
   loading: PropTypes.bool.isRequired,
   getPeople: PropTypes.func.isRequired,
   people: PropTypes.array.isRequired,
+  preview: PropTypes.array.isRequired,
   getVehicles: PropTypes.func.isRequired,
+  setPreview: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
   loading: selectAppLoading,
   people: selectPeople,
+  preview: selectPreview,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     getPeople: getPeopleAsync,
-    getVehicles: getPersonVehiclesAsync,
+    getVehicles: getVehiclesAsync,
+    setPreview: setPreviewAction,
   }, dispatch);
 };
 
