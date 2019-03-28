@@ -38,8 +38,8 @@ export const toggleLoadingMaskAction = createAction(TOGGLE_LOADING_MASK, (loadin
 export const getPeopleAsync = (param = {}) => {
   return async function (dispatch, getState, { api }) {
     try {
-      const { data } = await api.get('https://swapi.co/api/people/', param);
-      let results = _.get(data, 'results') || [];
+      const resp = await api.get('https://swapi.co/api/people/', param);
+      let results = _.get(resp, 'data.results') || [];
       results = _.map(results, (item) => {
         const url = _.get(item, 'url') || '';
         const id = getIdFromUrl(url);
@@ -60,10 +60,11 @@ export const getPersonVehiclesAsync = (id) => {
       const vehicles = _.get(person, 'vehicles') || [];
       const vehicleIds = _.map(vehicles, getIdFromUrl);
 
-      const data = Promise.all(_.map(vehicleIds, (identity) => {
-        return api.get(`/vehicles/${identity}`);
+      const resp = await Promise.all(_.map(vehicleIds, (identity) => {
+        return api.get(`https://swapi.co/api/vehicles/${identity}`);
       }) || []);
-      dispatch(getPersonVehiclesAction(id, { vehicleDetails: data }));
+      const results = _.map(resp, 'data');
+      dispatch(getPersonVehiclesAction(id, { vehicleDetails: results }));
     } catch (err) {
       message.error(err.message, 5);
     }

@@ -4,10 +4,13 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
 import styled from 'styled-components';
+import {
+  List, Button,
+} from 'antd';
 
-import { selectAppLoading } from 'common/selectors';
+import { selectAppLoading, selectPeople } from 'common/selectors';
 import LoadingMask from 'components/LoadingMask';
-import { getPeopleAsync } from 'modules/global';
+import { getPeopleAsync, getPersonVehiclesAsync } from 'modules/global';
 
 const StyledWrapper = styled.section`
   text-align: center;
@@ -43,7 +46,7 @@ class App extends Component {
   }
 
   render() {
-    const { loading } = this.props;
+    const { loading, people, getVehicles } = this.props;
 
     return (
       <div>
@@ -51,6 +54,27 @@ class App extends Component {
           <h1 className="boom">Welcome Autobot<br />{process.env.REACT_APP_HOST}</h1>
         </StyledWrapper>
         {(loading) && <LoadingWrapper><LoadingMask /></LoadingWrapper>}
+        <List
+          itemLayout="horizontal"
+          dataSource={people}
+          renderItem={(item) => (
+            <List.Item>
+              <List.Item.Meta
+                title={item.name}
+                // description={`Height: ${item.height} | Mass: ${item.mass} | Gender: ${item.gender}| Edited: ${item.edited}`}
+                description={(
+                  <div>
+                    <Button
+                      onClick={() => getVehicles(item.id)}
+                    >
+                      Click Me!
+                    </Button>
+                  </div>
+                )}
+              />
+            </List.Item>
+          )}
+        />
       </div>
     );
   }
@@ -59,15 +83,19 @@ class App extends Component {
 App.propTypes = {
   loading: PropTypes.bool.isRequired,
   getPeople: PropTypes.func.isRequired,
+  people: PropTypes.array.isRequired,
+  getVehicles: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
   loading: selectAppLoading,
+  people: selectPeople,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     getPeople: getPeopleAsync,
+    getVehicles: getPersonVehiclesAsync,
   }, dispatch);
 };
 
