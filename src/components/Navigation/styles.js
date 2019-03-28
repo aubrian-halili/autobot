@@ -25,7 +25,7 @@ export const StyledBrand = styled.div`
     margin-right: 10px;
   }
   > p {
-    font-size: 1.6em;
+    font-size: 2em;
     line-height: 1em;
     font-weight: 500;
     @media (max-width: 480px) {

@@ -30,19 +30,18 @@ const reducer = handleActions({
         (person) => person.merge(data)));
   },
   [SET_PREVIEW]: (state, { payload: { id } }) => state.setIn(['ui', 'preview'], id),
-  [TOGGLE_LOADING_MASK]: (state, { payload: { loading } }) => {
-    return state.setIn(['ui', 'loading'], loading);
-  },
+  [TOGGLE_LOADING_MASK]: (state, { payload: { loading } }) => state.setIn(['ui', 'loading'], loading),
 }, initialState);
 
 const getPeopleAction = createAction(GET_PEOPLE, (people) => ({ people }));
 const getVehiclesAction = createAction(GET_VEHICLES, (id, data) => ({ id, data }));
-// const toggleLoadingMaskAction = createAction(TOGGLE_LOADING_MASK, (loading) => ({ loading }));
+const toggleLoadingMaskAction = createAction(TOGGLE_LOADING_MASK, (loading) => ({ loading }));
 export const setPreviewAction = createAction(SET_PREVIEW, (id) => ({ id }));
 
 export const getPeopleAsync = (param = {}) => {
   return async function (dispatch, getState, { api }) {
     try {
+      dispatch(toggleLoadingMaskAction(true));
       const resp = await api.get('https://swapi.co/api/people/', param);
       let results = _.get(resp, 'data.results') || [];
       results = _.map(results, (item) => {
@@ -58,6 +57,8 @@ export const getPeopleAsync = (param = {}) => {
       dispatch(getPeopleAction(results));
     } catch (err) {
       message.error(err.message, 5);
+    } finally {
+      dispatch(toggleLoadingMaskAction(false));
     }
   };
 };

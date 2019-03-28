@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
-import styled from 'styled-components';
 import {
   List, Button, Drawer,
 } from 'antd';
@@ -20,32 +19,7 @@ import {
   setPreviewAction,
 } from 'modules/global';
 
-const StyledWrapper = styled.section`
-  text-align: center;
-  > h1 {
-    margin-top: 20px;
-    font-weight: 300;
-    font-size: 2.5em;
-    margin: 25px 0;
-  }
-`;
-
-const LoadingWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255,255,255,0.8);
-  z-index: 999999;
-  > * {
-    z-index: 1000000;
-    p {
-      font-weight: bold;
-      font-size: 20px!important;
-    }
-  }
-`;
+import * as S from './styles';
 
 class App extends Component {
   state = {
@@ -66,35 +40,34 @@ class App extends Component {
     const { visible } = this.state;
 
     return (
-      <div>
-        <StyledWrapper>
-        </StyledWrapper>
-        {(loading) && <LoadingWrapper><LoadingMask /></LoadingWrapper>}
-        <List
-          itemLayout="horizontal"
-          dataSource={people}
-          renderItem={(item) => (
-            <List.Item>
-              <List.Item.Meta
-                title={item.name}
-                // description={`Height: ${item.height} | Mass: ${item.mass} | Gender: ${item.gender} | Edited: ${item.edited}`}
-                description={(
-                  <div>
-                    <Button
-                      onClick={() => {
-                        getVehicles(item.id);
-                        setPreview(item.id);
-                        this.toggleDrawer(true);
-                      }}
-                    >
-                      Click Me!
-                    </Button>
-                  </div>
-                )}
-              />
-            </List.Item>
-          )}
-        />
+      <S.Home>
+        <section>
+          <S.PeopleList
+            itemLayout="horizontal"
+            dataSource={people}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  title={item.name}
+                  // description={`Height: ${item.height} | Mass: ${item.mass} | Gender: ${item.gender} | Edited: ${item.edited}`}
+                  description={(
+                    <div>
+                      <Button
+                        onClick={() => {
+                          getVehicles(item.id);
+                          setPreview(item.id);
+                          this.toggleDrawer(true);
+                        }}
+                      >
+                        Click Me!
+                      </Button>
+                    </div>
+                  )}
+                />
+              </List.Item>
+            )}
+          />
+        </section>
         <Drawer
           width={640}
           placement="right"
@@ -114,7 +87,12 @@ class App extends Component {
             )}
           />
         </Drawer>
-      </div>
+        {loading && (
+          <S.LoadingWrapper>
+            <LoadingMask />
+          </S.LoadingWrapper>
+        )}
+      </S.Home>
     );
   }
 }

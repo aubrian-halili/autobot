@@ -5,7 +5,7 @@ import { mediaMax } from 'themes/helpers';
 export const StyledLogoWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 150px;
+  width: 60px;
   height: 40px;
   margin-right: 10px;
   @media (max-width: 875px) {
@@ -106,7 +106,7 @@ export const StyledDivider = styled.span`
   background: #c5c8dc;
   height: 1px;
   display: block;
-  margin: 20px 0 10px;
+  margin: 10px 0;
 `;
 
 export const StyledDate = styled.div`
@@ -164,6 +164,7 @@ export const StyledUpButton = styled.button`
 
 export const StyledCopyRight = styled.div`
   font-size: 14px;
+  font-weight: 600;
   max-width: 515px;
   text-align: right;
   color: ${(props) => props.theme.textColor};
@@ -172,7 +173,6 @@ export const StyledCopyRight = styled.div`
   }
   a {
     color: ${(props) => props.theme.footer.textColor};
-    font-weight: 600;
   }
 `;
 
