@@ -1,12 +1,15 @@
-export function arrayToObject(arr, key = 'id') {
+import _ from 'lodash';
+import moment from 'moment';
+
+export const arrayToObject = (arr, key = 'id') => {
   const obj = {};
   arr.forEach((i) => Object.assign(obj, { [i[key]]: i }));
   return obj;
-}
+};
 
-export function objectToArray(obj) {
+export const objectToArray = (obj) => {
   return Object.keys(obj).map((key) => obj[key]);
-}
+};
 
 export const formatMoney = (price, c = 2, d = '.', t = ',') => {
   let n = price;
@@ -21,3 +24,17 @@ export const formatMoney = (price, c = 2, d = '.', t = ',') => {
 export const isMobile = () => (/mobile|tablet/i.test(navigator.userAgent));
 
 export const isSafari = () => (/Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor));
+
+export const getIdFromUrl = (url) => {
+  const splitted = _.compact(_.split(url, '/'));
+  return _.last(splitted) || '';
+};
+
+export const formatDate = (date, format = 'MM/DD/YY') => {
+  const parsedDate = new Date(date);
+
+  if (moment(parsedDate).isValid()) {
+    return moment(parsedDate).format(format);
+  }
+  return '';
+};

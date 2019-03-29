@@ -14,10 +14,10 @@ export const defaultTheme = {
   ...base,
   primary: '#f9521d',
   secondary: '#feb317',
-  textColor: '#001166',
+  textColor: '#000',
   navigation: {
     textColor: '#f9521d',
-    details: '<b>Autobot</b>',
+    details: '<b>#Autobot</b>',
     borderColor: '#feb317',
   },
   header: {
@@ -35,9 +35,5 @@ export const defaultTheme = {
     details: '<b>Autobot</b>',
     borderColor: '#feb317',
     hashtag: '#Autobot',
-  },
-  location: {
-    venue: 'Fira de Barcelona Montjuïc',
-    address: 'Avinguda de la Reina Maria Cristina, s/n, 08004 Barcelona, Spain',
   },
 };

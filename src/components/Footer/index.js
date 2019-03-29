@@ -1,11 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import scrollToComponent from 'react-scroll-to-component';
 import { withTheme } from 'styled-components';
 import {
-  StyledLogoWrapper,
-  StyledLogo,
   StyledWrapper,
   StyledText,
   StyledDivider,
@@ -19,7 +16,6 @@ import {
   StyledTermsWrapper,
   StyledCopyWrapper,
   StyledConditionsWrapper,
-  StyledDot,
 } from './styles';
 
 class Footer extends React.PureComponent {
@@ -38,41 +34,22 @@ class Footer extends React.PureComponent {
   };
 
   render() {
-    const { isBoothsIntro, theme } = this.props;
+    const { theme } = this.props;
     return (
       <StyledWrapper>
         <section>
           <StyledFooterContainer>
             <StyledDate>
-              <StyledLogoWrapper>
-                <StyledLogo alt="logo" />
-              </StyledLogoWrapper>
-              <StyledText
-                style={{ marginTop: '5px' }}
-                dangerouslySetInnerHTML={{ __html: theme.footer.details }}
-              />
             </StyledDate>
             <StyledSocial>
               <StyledHashtag large padding="0 10px 0 0">
                 {theme.footer.hashtag}
               </StyledHashtag>
               <a
-                href="https://www.facebook.com/autobot/"
+                href="https://github.com/aubrian-halili/autobot"
                 target="blank"
               >
-                <i className="fab fa-facebook" />
-              </a>
-              <a href="https://twitter.com/Autobot" target="blank">
-                <i className="fab fa-twitter-square" />
-              </a>
-              <a href="https://www.instagram.com/Autobot/" target="blank">
-                <i className="fab fa-instagram" />
-              </a>
-              <a
-                href="https://www.youtube.com/autobot"
-                target="blank"
-              >
-                <i className="fab fa-youtube " />
+                <i className="fab fa-github" />
               </a>
               <StyledUpButton onClick={this.onScroll}>
                 Back to top ↑
@@ -86,50 +63,13 @@ class Footer extends React.PureComponent {
           <StyledTermsWrapper className="copy">
             <StyledConditionsWrapper>
               <StyledText>
-                <strong>
-                  <a
-                    href="https://autobot.com/blog/"
-                    target="blank"
-                  >
-                    Blog
-                  </a>
-                  <StyledDot>•</StyledDot>
-                </strong>
-                <strong>
-                  {isBoothsIntro ? (
-                    <Link to="/">
-                      Terms and Conditions
-                    </Link>
-                  ) : (
-                    <Link to="/">
-                      Terms and Conditions
-                    </Link>
-                  )}
-                  <StyledDot>•</StyledDot>
-                  <Link to="/">Privacy Policy</Link>
-                  <StyledDot>•</StyledDot>
-                  <Link to="/">Cookie Declaration</Link>
-                  <StyledDot>•</StyledDot>
-                </strong>
-                <p
-                  style={{
-                    fontSize: '14px',
-                    display: 'inline',
-                    marginLeft: '5px',
-                  }}
-                >
-                  Contact us at:&nbsp;{' '}
-                </p>
-                <strong>
-                  <a href="mailto:info@autobot.com">info@autobot.com</a>
-                </strong>
               </StyledText>
             </StyledConditionsWrapper>
             <StyledCopyWrapper>
               <StyledCopyRight>
                 Autobot is brought to you by{' '}
                 <a href="http://autobot.com/" target="blank">
-                  Autobot Ltd.
+                  Aubrian Halili.
                 </a>
               </StyledCopyRight>
             </StyledCopyWrapper>

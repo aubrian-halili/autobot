@@ -25,7 +25,7 @@ export const StyledBrand = styled.div`
     margin-right: 10px;
   }
   > p {
-    font-size: 1.6em;
+    font-size: 2em;
     line-height: 1em;
     font-weight: 500;
     @media (max-width: 480px) {
@@ -39,6 +39,7 @@ export const StyledBrand = styled.div`
 `;
 
 export const StyledMenus = styled.ul`
+  list-style: none;
   display: flex;
   align-items: center;
   padding: 0;
@@ -119,6 +120,7 @@ export const StyledToggler = styled.button`
   -o-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
   cursor: pointer;
+  border: 0 none;
   position: relative;
   z-index: 11;
   display: none;

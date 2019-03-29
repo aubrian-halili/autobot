@@ -18,24 +18,21 @@ export const StyledWrapper = styled.div`
 
 const spin = keyframes`
   0% {
-      -webkit-transform: rotate(0deg);
-      -ms-transform: rotate(0deg);
-      transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-      -webkit-transform: rotate(360deg);
-      -ms-transform: rotate(360deg);
-      transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 `;
 
 export const StyledCircle = styled.div`
   display: block;
-  /* position: relative;
-  left: 50%;
-  top: 50%; */
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: 3px solid transparent;
   border-top-color: #1890ff;
@@ -73,7 +70,6 @@ export const StyledText = styled.p`
   color: ${(props) => props.theme.text};
   font-size: 18px;
   margin-top: 20px !important;
-  font-style: italic;
   max-width: 250px;
   width: 100%;
 `;

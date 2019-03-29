@@ -19,8 +19,8 @@ export default createGlobalStyle`
     background-color: #fff;
     min-height: 100%;
     min-width: 100%;
-    font-size: 10px;
-    font-family: "Lato", Helvetica, "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px;
+    font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
     color: ${(props) => props.theme.textColor};
 
     h1, h2, h3, h4, h5, h6, p {

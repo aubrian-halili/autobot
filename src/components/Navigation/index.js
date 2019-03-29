@@ -5,7 +5,6 @@ import {
   StyledNav,
   StyledBrand,
   StyledMenus,
-  StyledNavItems,
   StyledNavButton,
   StyledToggler,
   StyledOverlay,
@@ -35,7 +34,6 @@ class Navigation extends React.Component {
     return (
       <StyledNav id="top">
         <StyledBrand>
-          {/* <img src={logo} alt="Autobot" /> */}
           <p dangerouslySetInnerHTML={{ __html: theme.navigation.details }} />
         </StyledBrand>
         <StyledToggler visible={visible} onClick={this.toggleMenu}>
@@ -44,11 +42,6 @@ class Navigation extends React.Component {
           <span />
         </StyledToggler>
         <StyledMenus visible={visible}>
-          <li>
-            <StyledNavItems activeClassName="active" to="/">
-              Home
-            </StyledNavItems>
-          </li>
           <li>
             <StyledNavButton to="/">Home</StyledNavButton>
           </li>

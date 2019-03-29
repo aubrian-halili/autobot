@@ -1,66 +1,93 @@
 import { fromJS } from 'immutable';
-import { get } from 'lodash';
+import _ from 'lodash';
 import { createAction, handleActions } from 'redux-actions';
 import { message } from 'antd';
-import { arrayToObject } from 'common/helpers';
+import { getIdFromUrl } from 'common/helpers';
+import { selectPeople } from 'common/selectors';
 
-const GET_CONFERENCE_SUCCESS = 'modules/Global/GET_CONFERENCE_SUCCESS';
-const GET_SETTINGS_SUCCESS = 'modules/Global/GET_SETTINGS_SUCCESS';
-const GET_GLOBAL_DATA_SUCCESS = 'modules/Global/GET_GLOBAL_DATA_SUCCESS';
-const TOGGLE_LOADING_MASK = 'modules/Global/TOGGLE_LOADING_MASK';
+const GET_PEOPLE = 'modules/global/GET_PEOPLE';
+const GET_VEHICLES = 'modules/global/GET_VEHICLES';
+const SET_TOTAL = 'modules/global/SET_TOTAL';
+const SET_PREVIEW = 'modules/global/SET_PREVIEW';
+const TOGGLE_LOADING_MASK = 'modules/global/TOGGLE_LOADING_MASK';
 
 const initialState = fromJS({
   ui: {
-    appPending: true, // listen to this when initiating app loader
-    appTheme: 'europe', // set to asia or europe
-    loading: false, // toggling app loading mask
+    preview: '',
+    loading: false,
+    total: 0,
   },
   data: {
-    settings: {},
-    conference: {},
-    titoTickets: {},
+    people: [],
   },
 });
 
 const reducer = handleActions({
-  [GET_CONFERENCE_SUCCESS]: (state, { payload: { conference } }) => state.setIn(['data', 'conference'], fromJS(conference)),
-  [GET_SETTINGS_SUCCESS]: (state, { payload: { settings } }) => state.setIn(['data', 'settings'], fromJS(settings)),
-  [GET_GLOBAL_DATA_SUCCESS]: (state) => state.setIn(['ui', 'appPending'], false),
-  [TOGGLE_LOADING_MASK]: (state, { payload: { loading } }) => {
-    return state.setIn(['ui', 'loading'], loading);
+  [GET_PEOPLE]: (state, { payload: { people } }) => state.setIn(['data', 'people'], fromJS(people)),
+  [GET_VEHICLES]: (state, { payload: { id, data } }) => {
+    const people = state.getIn(['data', 'people']);
+
+    return state.setIn(['data', 'people'],
+      people.update(people.findIndex((item) => item.get('id') === id),
+        (person) => person.merge(data)));
   },
+  [SET_PREVIEW]: (state, { payload: { id } }) => state.setIn(['ui', 'preview'], id),
+  [SET_TOTAL]: (state, { payload: { total } }) => state.setIn(['ui', 'total'], total),
+  [TOGGLE_LOADING_MASK]: (state, { payload: { loading } }) => state.setIn(['ui', 'loading'], loading),
 }, initialState);
 
-const getConferenceSuccess = createAction(GET_CONFERENCE_SUCCESS, (conference) => ({ conference }));
-const getSettingsSuccess = createAction(GET_SETTINGS_SUCCESS, (settings) => ({ settings }));
-const getGlobalDataSuccess = createAction(GET_GLOBAL_DATA_SUCCESS);
-export const toggleLoadingMask = createAction(TOGGLE_LOADING_MASK, (loading) => ({ loading }));
+export const getPeopleAction = createAction(GET_PEOPLE, (people) => ({ people }));
+export const getVehiclesAction = createAction(GET_VEHICLES, (id, data) => ({ id, data }));
+export const toggleLoadingMaskAction = createAction(TOGGLE_LOADING_MASK, (loading) => ({ loading }));
+export const setPreviewAction = createAction(SET_PREVIEW, (id) => ({ id }));
+export const setTotalAction = createAction(SET_TOTAL, (total) => ({ total }));
 
-export const getConference = () => {
+export const getPeopleAsync = (params = {}) => {
   return async function (dispatch, getState, { api }) {
     try {
-      const { data } = await api.get(`/conferences/${process.env.REACT_APP_CONFERENCE_ID}`);
-      dispatch(getConferenceSuccess(data));
-      dispatch(getGlobalData());
+      dispatch(toggleLoadingMaskAction(true));
+      const resp = await api.get('/people/', { params });
+
+      const data = _.get(resp, 'data') || {};
+      const total = _.get(data, 'count') || 0;
+      let results = _.get(data, 'results') || [];
+      results = _.map(results, (item) => {
+        const url = _.get(item, 'url') || '';
+        const vehicles = _.get(item, 'vehicles') || [];
+
+        return {
+          ...item,
+          id: getIdFromUrl(url),
+          vehicleIds: _.map(vehicles, getIdFromUrl),
+        };
+      });
+      dispatch(getPeopleAction(results));
+      dispatch(setTotalAction(total));
     } catch (err) {
-      message.error(err.message, 5);
+      message.error(err.message);
+    } finally {
+      dispatch(toggleLoadingMaskAction(false));
     }
   };
 };
 
-export const getGlobalData = () => {
+export const getVehiclesAsync = (id) => {
   return async function (dispatch, getState, { api }) {
     try {
-      const response = await Promise.all([
-        api.get('/global_settings/'),
-      ]);
+      dispatch(toggleLoadingMaskAction(true));
+      const people = selectPeople(getState());
+      const person = _.find(people, { id }) || {};
+      const vehicleIds = _.get(person, 'vehicleIds') || [];
 
-      const settings = arrayToObject(get(response, '[1].data', []), 'slug');
-
-      dispatch(getSettingsSuccess(settings));
-      dispatch(getGlobalDataSuccess());
+      const resp = await Promise.all(_.map(vehicleIds, (identity) => {
+        return api.get(`/vehicles/${identity}`);
+      }) || []);
+      const results = _.map(resp, 'data');
+      dispatch(getVehiclesAction(id, { vehicleDetails: results }));
     } catch (err) {
-      message.error(err.message, 5);
+      message.error(err.message);
+    } finally {
+      dispatch(toggleLoadingMaskAction(false));
     }
   };
 };
