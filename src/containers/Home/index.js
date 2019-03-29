@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
-import scrollToComponent from 'react-scroll-to-component';
-import { formatDate } from 'common/helpers';
 import {
-  Input, List, Button, Drawer, Divider,
+  Input, Drawer,
 } from 'antd';
 
 import LoadingMask from 'components/LoadingMask';
@@ -23,6 +20,8 @@ import {
   setPreviewAction,
 } from 'modules/global';
 
+import People from './People';
+import Vehicles from './Vehicles';
 import * as S from './styles';
 
 const Search = Input.Search;
@@ -36,12 +35,6 @@ class App extends Component {
     const { getPeople } = this.props;
     getPeople();
   }
-
-  onScroll = () => {
-    const navigation = document.querySelector('#top');
-    scrollToComponent(navigation);
-    navigation.focus();
-  };
 
   toggleDrawer = (visible) => {
     this.setState({ visible });
@@ -74,75 +67,24 @@ class App extends Component {
               />
             </div>
           </S.Search>
-          <S.PeopleList
-            itemLayout="horizontal"
-            dataSource={people}
-            pagination={{
-              total,
-              defaultCurrent: 1,
-              onChange: (page) => {
-                this.onScroll();
-                getPeople({ page });
-              },
-            }}
-            renderItem={(item) => (
-              <List.Item
-                actions={[(
-                  <Button
-                    onClick={() => {
-                      getVehicles(item.id);
-                      setPreview(item.id);
-                      this.toggleDrawer(true);
-                    }}
-                  >
-                    Show Vehicles
-                  </Button>
-                )]}
-              >
-                <List.Item.Meta
-                  title={item.name}
-                  description={(
-                    <div>
-                      <b>Height:</b>{` ${item.height}`}
-                      <Divider type="vertical" />
-                      <b>Mass:</b>{` ${item.mass}`}
-                      <Divider type="vertical" />
-                      <b>Gender:</b>{` ${_.capitalize(item.gender)}`}
-                      <Divider type="vertical" />
-                      <b>Edited:</b>{` ${formatDate(item.edited)}`}
-                    </div>
-                  )}
-                />
-              </List.Item>
-            )}
+          <People
+            data={people}
+            total={total}
+            getPeople={getPeople}
+            getVehicles={getVehicles}
+            setPreview={setPreview}
+            toggleDrawer={this.toggleDrawer}
           />
         </section>
         <Drawer
           title={(<b>VEHICLES</b>)}
-          width="45%"
+          width="40%"
           placement="right"
           onClose={() => this.toggleDrawer(false)}
           visible={visible}
         >
-          <S.VehicleList
-            itemLayout="horizontal"
-            dataSource={preview}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta
-                  title={item.name}
-                  description={(
-                    <div>
-                      <b>Model:</b>{` ${item.model}`}
-                      <Divider type="vertical" />
-                      <b>Manufacturer:</b>{` ${item.manufacturer}`}
-                      <Divider type="vertical" />
-                      <b>Vehicle Class:</b>{` ${item.vehicleClass}`}
-                    </div>
-                  )}
-                />
-              </List.Item>
-            )}
+          <Vehicles
+            data={preview}
           />
         </Drawer>
         {loading && (

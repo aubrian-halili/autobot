@@ -16,13 +16,13 @@ export const Search = styled.div`
   justify-content: space-between;
 `;
 
-export const PeopleList = styled(antd.List)`
+export const People = styled(antd.List)`
   .ant-list-item-meta-title {
     font-weight: 600;
   }
 `;
 
-export const VehicleList = styled(antd.List)`
+export const Vehicles = styled(antd.List)`
   .ant-list-item-meta-title {
     font-weight: 600;
   }
